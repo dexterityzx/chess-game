@@ -4,7 +4,7 @@ using NSubstitute;
 
 namespace chess_game
 {
-    public class UnitTest1
+    public class PawnTest
     {
         [Fact]
         public void PawnShouldCaptureChessWithTwoMoves()
