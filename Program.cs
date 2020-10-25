@@ -38,10 +38,10 @@ namespace chess_game
             for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
             {
                 //Console.Write(file);
-                var whiteChessPosition = new Position(2, file);
+                var whiteChessPosition = new Position(file, 2);
                 board.Set(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
 
-                var BlackChessPosition = new Position(7, file);
+                var BlackChessPosition = new Position(file, 7);
                 board.Set(BlackChessPosition.RankIndex, BlackChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, BlackChessPosition));
             }
 
@@ -56,8 +56,8 @@ namespace chess_game
         {
             var positions = commandString.Split("->");
 
-            var from = new Position(int.Parse(positions[0].Substring(0, 1)), positions[0][0]);
-            var to = new Position(int.Parse(positions[1].Substring(0, 1)), positions[1][0]);
+            var from = new Position(positions[0][0], int.Parse(positions[0].Substring(0, 1)));
+            var to = new Position(positions[1][0], int.Parse(positions[1].Substring(0, 1)));
 
             return new Command(player, from, to, false);
         }

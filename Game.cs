@@ -71,6 +71,10 @@ namespace chess_game
         private bool IsValidCommand(Command command, GameState currentState)
         {
             var chess = currentState.Board.Get(command.From.RankIndex, command.From.FileIndex);
+            if (chess == null)
+            {
+                throw new Exception("Invalid Command. From position has no chess.");
+            }
             // chess is not null
 
             // from and to position are not out of boundary
@@ -93,11 +97,11 @@ namespace chess_game
             }
             return true;
         }
-        private Position GetInPassingCapturedChessPosition(IBoard board, Position To, PlayerType playerType)
+        private Position GetChessPositionCapturedByInPassing(IBoard board, Position To, PlayerType playerType)
         {
             var offset = playerType == PlayerType.White ? -1 : 1;
             var chess = board.Get(To.RankIndex + offset, To.FileIndex);
-            return chess == null ? null : new Position(To.Rank + offset, To.File);
+            return chess == null ? null : new Position(To.File, To.Rank + offset);
         }
         private bool IsValidPawnMove(Command command, GameState gameState)
         {
@@ -118,16 +122,24 @@ namespace chess_game
             }
             else
             {
-                //check in passing condition
-                var positionToCapture = GetInPassingCapturedChessPosition(gameState.Board, command.To, command.Player);
-                var chessToCapture = gameState.Board.Get(positionToCapture.RankIndex, positionToCapture.FileIndex);
+                //normal capture
+                var chessToCapture = gameState.Board.Get(command.To.RankIndex, command.To.FileIndex);
+                if (chessToCapture != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    //check in passing condition
+                    var positionToCapture = GetChessPositionCapturedByInPassing(gameState.Board, command.To, command.Player);
+                    chessToCapture = gameState.Board.Get(positionToCapture.RankIndex, positionToCapture.FileIndex);
 
-                return positionToCapture != null
-                    && IsInPassingCapturedAvailable(positionToCapture, gameState)
-                    && chessToCapture.Player == GetOpponent(command.Player)
-                    && (Math.Abs(fileMove) == 1)
-                    && (rankMove == 1);
-
+                    return positionToCapture != null
+                        && IsInPassingCapturedAvailable(positionToCapture, gameState)
+                        && chessToCapture.Player == GetOpponent(command.Player)
+                        && (Math.Abs(fileMove) == 1)
+                        && (rankMove == 1);
+                }
             }
         }
         private bool IsInPassingCapturedAvailable(Position PositionToCapture, GameState gameState)
@@ -155,7 +167,7 @@ namespace chess_game
             //check in passing
             if (chess.Type == ChessType.Pawn)
             {
-                var capturedChessPosition = GetInPassingCapturedChessPosition(currentState.Board, command.To, command.Player);
+                var capturedChessPosition = GetChessPositionCapturedByInPassing(currentState.Board, command.To, command.Player);
                 if (capturedChessPosition != null)
                 {
                     nextState.Board.Set(capturedChessPosition.RankIndex, capturedChessPosition.FileIndex, null);

@@ -55,7 +55,8 @@ namespace chess_game
                 return _rank - 1;
             }
         }
-        public Position(int rank, char file)
+
+        public Position(char file, int rank)
         {
             Rank = rank;
             File = file;
@@ -63,7 +64,7 @@ namespace chess_game
 
         public Position Clone()
         {
-            return new Position(_rank, _file);
+            return new Position(_file, _rank);
         }
 
         public bool Equals(Position position)
