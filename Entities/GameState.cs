@@ -19,7 +19,9 @@ namespace chess_game
         }
         public GameState Clone()
         {
-            return new GameState(Board.Clone(), Player, Result, PlayerCommand.Clone());
+            var borad = Board != null ? Board.Clone() : null;
+            var playerCommand = PlayerCommand != null ? PlayerCommand.Clone() : null;
+            return new GameState(Board.Clone(), Player, Result, playerCommand);
         }
 
     }

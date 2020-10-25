@@ -6,8 +6,117 @@ namespace chess_game
 {
     public class PawnTest
     {
+        public PawnTest()
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+
         [Fact]
-        public void PawnShouldCaptureChessWithTwoMoves()
+        public void PawnCanMoveOneStepForward()
+        {
+            var board = new Board();
+            var whiteStartChessPosition = new Position('a', 2);
+            var blackStartChessPosition = new Position('a', 7);
+
+            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteStartChessPosition));
+            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackStartChessPosition));
+
+            var gameState = new GameState();
+            gameState.Board = board;
+            gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.White;
+
+            var game = new Game(gameState);
+
+            var whiteEndChessPosition = new Position('a', 3);
+            var blackEndChessPosition = new Position('a', 6);
+
+            var whitePlayerCommand = new Command(PlayerType.White, whiteStartChessPosition, whiteEndChessPosition, false);
+            game.ExecuteCommand(whitePlayerCommand);
+
+            var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
+            game.ExecuteCommand(blackPlayerCommand);
+
+            Assert.Equal(game.GameState.Board.Get(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex), null);
+            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Player, PlayerType.White);
+            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Type, ChessType.Pawn);
+
+
+            Assert.Equal(game.GameState.Board.Get(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex), null);
+            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Player, PlayerType.Black);
+            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Type, ChessType.Pawn);
+        }
+
+        [Fact]
+        public void PawnCanMoveTwoStepForwardAtInitialPosition()
+        {
+            var board = new Board();
+            var whiteStartChessPosition = new Position('a', 2);
+            var blackStartChessPosition = new Position('a', 7);
+
+            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteStartChessPosition));
+            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackStartChessPosition));
+
+            var gameState = new GameState();
+            gameState.Board = board;
+            gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.White;
+
+            var game = new Game(gameState);
+
+            var whiteEndChessPosition = new Position('a', 4);
+            var blackEndChessPosition = new Position('a', 5);
+
+            var whitePlayerCommand = new Command(PlayerType.White, whiteStartChessPosition, whiteEndChessPosition, false);
+            game.ExecuteCommand(whitePlayerCommand);
+
+            var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
+            game.ExecuteCommand(blackPlayerCommand);
+
+            Assert.Equal(game.GameState.Board.Get(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex), null);
+            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Player, PlayerType.White);
+            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Type, ChessType.Pawn);
+
+
+            Assert.Equal(game.GameState.Board.Get(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex), null);
+            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Player, PlayerType.Black);
+            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Type, ChessType.Pawn);
+        }
+
+        [Fact]
+        public void PawnCanNotMoveTwoStepForwardWhenNotAtInitialPosition()
+        {
+            var board = new Board();
+            var whiteStartChessPosition = new Position('a', 3);
+            var blackStartChessPosition = new Position('a', 6);
+
+            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+
+            var gameState = new GameState();
+            gameState.Board = board;
+            gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.White;
+
+            var game = new Game(gameState);
+
+            var whiteEndChessPosition = new Position('a', 5);
+            var blackEndChessPosition = new Position('a', 4);
+
+            var whitePlayerCommand = new Command(PlayerType.White, whiteStartChessPosition, whiteEndChessPosition, false);
+            var excption1 = Assert.Throws<Exception>(() => game.ExecuteCommand(whitePlayerCommand));
+            Assert.Equal(excption1.Message, "Invalid Command.");
+
+            var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
+            var excption2 = Assert.Throws<Exception>(() => game.ExecuteCommand(blackPlayerCommand));
+            Assert.Equal(excption2.Message, "Invalid Command.");
+        }
+
+        [Fact]
+        public void PawnCanCaptureChessWithInPassing()
         {
 
             var board = new Board();
