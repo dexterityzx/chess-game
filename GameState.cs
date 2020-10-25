@@ -7,6 +7,9 @@ namespace chess_game
         public GameResult Result { get; set; }
         public Command PlayerCommand { get; set; }
 
+        public GameState()
+        {
+        }
         public GameState(IBoard board, PlayerType player, GameResult gameResult, Command command)
         {
             Board = board;

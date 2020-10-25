@@ -4,10 +4,10 @@ namespace chess_game
 {
     public class Position : IClonable<Position>
     {
-        const int MIN_RANK = 1;
-        const int MAX_RANK = 8;
-        const char MIN_FILE = 'a';
-        const char MAX_FILE = 'h';
+        public const int MIN_RANK = 1;
+        public const int MAX_RANK = 8;
+        public const char MIN_FILE = 'a';
+        public const char MAX_FILE = 'h';
         private char _file;
         private int _rank;
         public int Rank

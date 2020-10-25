@@ -2,9 +2,14 @@ namespace chess_game
 {
     public class Board : IBoard
     {
-        const int MIN = 0;
-        const int MAX = 8;
-        private Chess[,] _board = new Chess[MAX, MAX];
+        public const int MIN = 0;
+        public const int MAX = 7;
+        private Chess[,] _board;
+
+        public Board()
+        {
+            _board = new Chess[MAX + 1, MAX + 1];
+        }
 
         public Board(Chess[,] board)
         {
@@ -33,7 +38,7 @@ namespace chess_game
         {
             if (IsValidPosition(rank, file))
             {
-                return _board[rank, file].Clone();
+                return _board[rank, file] != null ? _board[rank, file].Clone() : null;
             }
             else
             {
@@ -43,12 +48,12 @@ namespace chess_game
 
         public IBoard Clone()
         {
-            var clonedBoard = new Chess[MAX, MAX];
+            var clonedBoard = new Chess[MAX + 1, MAX + 1];
             for (var i = 0; i < _board.GetLength(0); i++)
             {
                 for (var j = 0; j < _board.GetLength(0); j++)
                 {
-                    clonedBoard[i, j] = _board[i, j].Clone();
+                    clonedBoard[i, j] = _board[i, j] != null ? _board[i, j].Clone() : null;
                 }
             }
 

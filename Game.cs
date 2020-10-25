@@ -11,9 +11,32 @@ namespace chess_game
             get => _gameStates.Count > 0 ? _gameStates.Peek().Clone() : null;
         }
 
+        public GameResult GameResult
+        {
+            get
+            {
+                if (_gameStates.Count > 0)
+                {
+                    return _gameStates.Peek().Result;
+                };
+                return GameResult.None;
+            }
+        }
+
         public Game()
         {
             _gameStates = new Stack<GameState>();
+        }
+
+        public Game(GameState gameState)
+        {
+            _gameStates = new Stack<GameState>();
+            _gameStates.Push(gameState);
+
+            if (gameState.PlayerCommand != null && !gameState.PlayerCommand.HasBeenExecuted)
+            {
+                ExecuteCommand(gameState.PlayerCommand);
+            }
         }
 
         public void ExecuteCommand(Command command)
@@ -22,6 +45,7 @@ namespace chess_game
             {
                 throw new Exception("Invalid Command.");
             }
+
 
             _gameStates.Push(NextState(command, GameState));
 
@@ -61,7 +85,8 @@ namespace chess_game
             switch (chess.Type)
             {
                 case ChessType.Pawn:
-                    if (!IsValidPawnMove(command, currentState)) return false;
+                    var isValid = IsValidPawnMove(command, currentState);
+                    if (!isValid) return false;
                     break;
                 default:
                     throw new Exception("Invalid ChessType");
@@ -72,7 +97,7 @@ namespace chess_game
         {
             var offset = playerType == PlayerType.White ? -1 : 1;
             var chess = board.Get(To.RankIndex + offset, To.FileIndex);
-            return chess == null ? null : new Position(To.RankIndex + offset, To.File);
+            return chess == null ? null : new Position(To.Rank + offset, To.File);
         }
         private bool IsValidPawnMove(Command command, GameState gameState)
         {
@@ -127,7 +152,6 @@ namespace chess_game
             nextState.Board.Set(command.From.RankIndex, command.From.FileIndex, null);
             nextState.Board.Set(command.To.RankIndex, command.To.FileIndex, chess);
 
-            nextState.Result = ValidateGameResult(nextState);
             //check in passing
             if (chess.Type == ChessType.Pawn)
             {
@@ -137,6 +161,11 @@ namespace chess_game
                     nextState.Board.Set(capturedChessPosition.RankIndex, capturedChessPosition.FileIndex, null);
                 }
             }
+
+            nextState.Result = ValidateGameResult(nextState);
+
+            nextState.PlayerCommand = command;
+            nextState.PlayerCommand.HasBeenExecuted = true;
 
             return nextState;
         }
