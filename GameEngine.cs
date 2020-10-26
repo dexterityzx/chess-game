@@ -51,16 +51,19 @@ namespace chess_game
 
         }
 
-        public bool NextPlayer(GameResult result)
+        public bool NextRound(out PlayerType nextPlayer)
         {
+            var lastPlayer = _gameStates.Peek().Player;
 
-            switch (result)
+            switch (GameResult)
             {
                 case GameResult.Checkmate:
                 case GameResult.Stalemate:
+                    nextPlayer = PlayerType.None;
                     return false;
 
                 case GameResult.None:
+                    nextPlayer = GetOpponent(lastPlayer);
                     return true;
 
                 default:
@@ -196,6 +199,7 @@ namespace chess_game
             switch (playerType)
             {
                 case PlayerType.Black:
+                case PlayerType.None:
                     return PlayerType.White;
                 case PlayerType.White:
                     return PlayerType.Black;

@@ -6,11 +6,11 @@ namespace chess_game
     {
         static void Main(string[] args)
         {
-            var game = InitializeGame();
+            var gameEngine = InitializeGameEngine();
 
-            var player = PlayerType.White;
+            PlayerType player;
 
-            while (game.GameResult == GameResult.None)
+            while (gameEngine.NextRound(out player))
             {
                 try
                 {
@@ -19,7 +19,7 @@ namespace chess_game
                     var commandString = Console.ReadLine();
                     //
                     var command = GenerateCommand(commandString, player);
-                    game.ExecuteCommand(command);
+                    gameEngine.ExecuteCommand(command);
                 }
                 catch (Exception exception)
                 {
@@ -32,7 +32,7 @@ namespace chess_game
 
         }
 
-        public static GameEngine InitializeGame()
+        public static GameEngine InitializeGameEngine()
         {
             var board = new Board();
             for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
@@ -48,6 +48,7 @@ namespace chess_game
             var gameState = new GameState();
             gameState.Board = board;
             gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.None;
 
             return new GameEngine(gameState);
         }
