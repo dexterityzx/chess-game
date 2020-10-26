@@ -62,6 +62,12 @@ namespace chess_game
             File = file;
         }
 
+        public Position(string position)
+        {
+            File = position[0];
+            Rank = (int)position[1];
+        }
+
         public Position Clone()
         {
             return new Position(_file, _rank);

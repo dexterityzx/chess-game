@@ -56,8 +56,8 @@ namespace chess_game
         {
             var positions = commandString.Split("->");
 
-            var from = new Position(positions[0][0], int.Parse(positions[0].Substring(0, 1)));
-            var to = new Position(positions[1][0], int.Parse(positions[1].Substring(0, 1)));
+            var from = new Position(positions[0]);
+            var to = new Position(positions[1]);
 
             return new Command(player, from, to, false);
         }
