@@ -21,30 +21,6 @@ namespace chess_game
             return (MIN <= rank && rank <= MAX) &&
                 (MIN <= file && file <= MAX);
         }
-        public void Set(int rank, int file, Chess chess)
-        {
-            if (IsValidPosition(rank, file))
-            {
-                _board[rank, file] = chess;
-            }
-            else
-            {
-                throw new System.ArgumentOutOfRangeException();
-            }
-
-        }
-
-        public Chess Get(int rank, int file)
-        {
-            if (IsValidPosition(rank, file))
-            {
-                return _board[rank, file] != null ? _board[rank, file].Clone() : null;
-            }
-            else
-            {
-                throw new System.ArgumentOutOfRangeException();
-            }
-        }
 
         public IBoard Clone()
         {
@@ -62,10 +38,19 @@ namespace chess_game
 
         public Chess GetChess(Position position)
         {
+
             var file = FileToBoardIndex(position.File);
             var rank = RankToBoardIndex(position.Rank);
 
-            return Get(rank, file);
+            if (IsValidPosition(rank, file))
+            {
+                return _board[rank, file] != null ? _board[rank, file].Clone() : null;
+            }
+            else
+            {
+                throw new System.ArgumentOutOfRangeException();
+            }
+
         }
 
         public void SetChess(Position position, Chess chess)
@@ -73,7 +58,14 @@ namespace chess_game
             var file = FileToBoardIndex(position.File);
             var rank = RankToBoardIndex(position.Rank);
 
-            Set(rank, file, chess);
+            if (IsValidPosition(rank, file))
+            {
+                _board[rank, file] = chess;
+            }
+            else
+            {
+                throw new System.ArgumentOutOfRangeException();
+            }
         }
 
         private int FileToBoardIndex(char positionFile)
