@@ -105,19 +105,29 @@ namespace chess_game
         }
         private bool IsValidPawnMove(Command command, GameState gameState)
         {
-            var chess = gameState.Board.Get(command.From.RankIndex, command.From.FileIndex);
-            var rankMove = command.To.RankIndex - command.From.RankIndex;
-            var fileMove = command.To.FileIndex - command.From.FileIndex;
-
-            if (command.Player == PlayerType.Black)
+            if (command.Player == PlayerType.None)
             {
-                rankMove *= -1;
+                return false;
             }
+
+            var chess = gameState.Board.Get(command.From.RankIndex, command.From.FileIndex);
+            var rankMove = Math.Abs(command.To.RankIndex - command.From.RankIndex);
+            var fileMove = Math.Abs(command.To.FileIndex - command.From.FileIndex);
+
 
             if (fileMove == 0)
             {
-                //rank can only be ascsending
+                //can not move straight if some other chess were on the way
                 //can move 2 steps from initial location
+                var direction = command.Player == PlayerType.Black ? -1 : 1;
+                for (var move = 1; move <= rankMove; move++)
+                {
+                    var chessOntheWay = gameState.Board.Get(command.From.RankIndex + move * direction, command.From.FileIndex);
+                    if (chessOntheWay != null)
+                    {
+                        return false;
+                    }
+                }
                 return (command.From.Equals(chess.InitialPosition) && rankMove == 2) || (rankMove == 1);
             }
             else
@@ -137,8 +147,8 @@ namespace chess_game
                     return positionToCapture != null
                         && IsInPassingCapturedAvailable(positionToCapture, gameState)
                         && chessToCapture.Player == GetOpponent(command.Player)
-                        && (Math.Abs(fileMove) == 1)
-                        && (rankMove == 1);
+                        && fileMove == 1
+                        && rankMove == 1;
                 }
             }
         }

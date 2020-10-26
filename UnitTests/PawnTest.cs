@@ -116,6 +116,83 @@ namespace chess_game
         }
 
         [Fact]
+        public void PawnCanNotMoveOneStepForwardWhenOtherChessesAreOnTheWay()
+        {
+            var board = new Board();
+            var whiteStartChessPosition = new Position('a', 3);
+            var blackStartChessPosition = new Position('a', 4);
+
+            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+
+            var gameState = new GameState();
+            gameState.Board = board;
+            gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.White;
+
+            var game = new Game(gameState);
+
+            var whiteEndChessPosition = new Position('a', 4);
+            var blackEndChessPosition = new Position('a', 3);
+
+            var whitePlayerCommand = new Command(PlayerType.White, whiteStartChessPosition, whiteEndChessPosition, false);
+            var excption1 = Assert.Throws<Exception>(() => game.ExecuteCommand(whitePlayerCommand));
+            Assert.Equal(excption1.Message, "Invalid Command.");
+
+            var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
+            var excption2 = Assert.Throws<Exception>(() => game.ExecuteCommand(blackPlayerCommand));
+            Assert.Equal(excption2.Message, "Invalid Command.");
+        }
+
+        [Fact]
+        public void BlackPawnCanNotMoveTwoStepForwardWhenOtherChessesAreOnTheWay()
+        {
+            var board = new Board();
+            var whiteStartChessPosition = new Position('a', 5);
+            var blackStartChessPosition = new Position('a', 7);
+
+            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+
+            var gameState = new GameState();
+            gameState.Board = board;
+            gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.White;
+
+            var game = new Game(gameState);
+
+            var blackEndChessPosition = new Position('a', 5);
+
+            var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
+            var excption2 = Assert.Throws<Exception>(() => game.ExecuteCommand(blackPlayerCommand));
+            Assert.Equal(excption2.Message, "Invalid Command.");
+        }
+
+        [Fact]
+        public void WhitePawnCanNotMoveTwotepForwardWhenOtherChessesAreOnTheWay()
+        {
+            var board = new Board();
+            var whiteStartChessPosition = new Position('a', 2);
+            var blackStartChessPosition = new Position('a', 4);
+
+            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+
+            var gameState = new GameState();
+            gameState.Board = board;
+            gameState.Result = GameResult.None;
+            gameState.Player = PlayerType.White;
+
+            var game = new Game(gameState);
+
+            var whiteEndChessPosition = new Position('a', 4);
+
+            var whitePlayerCommand = new Command(PlayerType.White, whiteStartChessPosition, whiteEndChessPosition, false);
+            var excption1 = Assert.Throws<Exception>(() => game.ExecuteCommand(whitePlayerCommand));
+            Assert.Equal(excption1.Message, "Invalid Command.");
+        }
+
+        [Fact]
         public void PawnCanCaptureChessWithInPassing()
         {
 
