@@ -39,10 +39,10 @@ namespace chess_game
             {
                 //Console.Write(file);
                 var whiteChessPosition = new Position(file, 2);
-                board.Set(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
+                board.SetChess(whiteChessPosition, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
 
                 var BlackChessPosition = new Position(file, 7);
-                board.Set(BlackChessPosition.RankIndex, BlackChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, BlackChessPosition));
+                board.SetChess(BlackChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, BlackChessPosition));
             }
 
             var gameState = new GameState();
