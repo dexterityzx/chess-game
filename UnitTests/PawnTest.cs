@@ -21,8 +21,8 @@ namespace chess_game
             var whiteStartChessPosition = new Position('a', 2);
             var blackStartChessPosition = new Position('a', 7);
 
-            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteStartChessPosition));
-            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackStartChessPosition));
+            board.SetChess(whiteStartChessPosition, new Chess(PlayerType.White, ChessType.Pawn, whiteStartChessPosition));
+            board.SetChess(blackStartChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, blackStartChessPosition));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -40,14 +40,14 @@ namespace chess_game
             var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
             game.ExecuteCommand(blackPlayerCommand);
 
-            Assert.Equal(game.GameState.Board.Get(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex), null);
-            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Player, PlayerType.White);
-            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Type, ChessType.Pawn);
+            Assert.Equal(game.GameState.Board.GetChess(whiteStartChessPosition), null);
+            Assert.Equal(game.GameState.Board.GetChess(whiteEndChessPosition).Player, PlayerType.White);
+            Assert.Equal(game.GameState.Board.GetChess(whiteEndChessPosition).Type, ChessType.Pawn);
 
 
-            Assert.Equal(game.GameState.Board.Get(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex), null);
-            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Player, PlayerType.Black);
-            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Type, ChessType.Pawn);
+            Assert.Equal(game.GameState.Board.GetChess(blackStartChessPosition), null);
+            Assert.Equal(game.GameState.Board.GetChess(blackEndChessPosition).Player, PlayerType.Black);
+            Assert.Equal(game.GameState.Board.GetChess(blackEndChessPosition).Type, ChessType.Pawn);
         }
 
         [Fact]
@@ -57,8 +57,8 @@ namespace chess_game
             var whiteStartChessPosition = new Position('a', 2);
             var blackStartChessPosition = new Position('a', 7);
 
-            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteStartChessPosition));
-            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackStartChessPosition));
+            board.SetChess(whiteStartChessPosition, new Chess(PlayerType.White, ChessType.Pawn, whiteStartChessPosition));
+            board.SetChess(blackStartChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, blackStartChessPosition));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -76,14 +76,14 @@ namespace chess_game
             var blackPlayerCommand = new Command(PlayerType.Black, blackStartChessPosition, blackEndChessPosition, false);
             game.ExecuteCommand(blackPlayerCommand);
 
-            Assert.Equal(game.GameState.Board.Get(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex), null);
-            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Player, PlayerType.White);
-            Assert.Equal(game.GameState.Board.Get(whiteEndChessPosition.RankIndex, whiteEndChessPosition.FileIndex).Type, ChessType.Pawn);
+            Assert.Equal(game.GameState.Board.GetChess(whiteStartChessPosition), null);
+            Assert.Equal(game.GameState.Board.GetChess(whiteEndChessPosition).Player, PlayerType.White);
+            Assert.Equal(game.GameState.Board.GetChess(whiteEndChessPosition).Type, ChessType.Pawn);
 
 
-            Assert.Equal(game.GameState.Board.Get(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex), null);
-            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Player, PlayerType.Black);
-            Assert.Equal(game.GameState.Board.Get(blackEndChessPosition.RankIndex, blackEndChessPosition.FileIndex).Type, ChessType.Pawn);
+            Assert.Equal(game.GameState.Board.GetChess(blackStartChessPosition), null);
+            Assert.Equal(game.GameState.Board.GetChess(blackEndChessPosition).Player, PlayerType.Black);
+            Assert.Equal(game.GameState.Board.GetChess(blackEndChessPosition).Type, ChessType.Pawn);
         }
 
         [Fact]
@@ -93,8 +93,8 @@ namespace chess_game
             var whiteStartChessPosition = new Position('a', 3);
             var blackStartChessPosition = new Position('a', 6);
 
-            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
-            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+            board.SetChess(whiteStartChessPosition, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.SetChess(blackStartChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -122,8 +122,8 @@ namespace chess_game
             var whiteStartChessPosition = new Position('a', 3);
             var blackStartChessPosition = new Position('a', 4);
 
-            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
-            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+            board.SetChess(whiteStartChessPosition, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.SetChess(blackStartChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -151,8 +151,8 @@ namespace chess_game
             var whiteStartChessPosition = new Position('a', 5);
             var blackStartChessPosition = new Position('a', 7);
 
-            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
-            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+            board.SetChess(whiteStartChessPosition, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.SetChess(blackStartChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -175,8 +175,8 @@ namespace chess_game
             var whiteStartChessPosition = new Position('a', 2);
             var blackStartChessPosition = new Position('a', 4);
 
-            board.Set(whiteStartChessPosition.RankIndex, whiteStartChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
-            board.Set(blackStartChessPosition.RankIndex, blackStartChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
+            board.SetChess(whiteStartChessPosition, new Chess(PlayerType.White, ChessType.Pawn, new Position('a', 2)));
+            board.SetChess(blackStartChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, new Position('a', 7)));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -199,8 +199,8 @@ namespace chess_game
             var board = new Board();
             var whiteChessPosition = new Position('a', 5);
             var blackChessPosition = new Position('b', 7);
-            board.Set(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
-            board.Set(blackChessPosition.RankIndex, blackChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackChessPosition));
+            board.SetChess(whiteChessPosition, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
+            board.SetChess(blackChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, blackChessPosition));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -217,7 +217,7 @@ namespace chess_game
             game.ExecuteCommand(command2);
 
             var capturedPosition = new Position('b', 5);
-            Assert.Equal(game.GameState.Board.Get(capturedPosition.RankIndex, capturedPosition.FileIndex), null);
+            Assert.Equal(game.GameState.Board.GetChess(capturedPosition), null);
 
         }
 
@@ -228,8 +228,8 @@ namespace chess_game
             var board = new Board();
             var whiteChessPosition = new Position('a', 5);
             var blackChessPosition = new Position('b', 5);
-            board.Set(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
-            board.Set(blackChessPosition.RankIndex, blackChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackChessPosition));
+            board.SetChess(whiteChessPosition, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
+            board.SetChess(blackChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, blackChessPosition));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -253,8 +253,8 @@ namespace chess_game
             var board = new Board();
             var whiteChessPosition = new Position('a', 5);
             var blackChessPosition = new Position('b', 6);
-            board.Set(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
-            board.Set(blackChessPosition.RankIndex, blackChessPosition.FileIndex, new Chess(PlayerType.Black, ChessType.Pawn, blackChessPosition));
+            board.SetChess(whiteChessPosition, new Chess(PlayerType.White, ChessType.Pawn, whiteChessPosition));
+            board.SetChess(blackChessPosition, new Chess(PlayerType.Black, ChessType.Pawn, blackChessPosition));
 
             var gameState = new GameState();
             gameState.Board = board;
@@ -267,11 +267,11 @@ namespace chess_game
             game.ExecuteCommand(command1);
 
 
-            Assert.Equal(game.GameState.Board.Get(blackChessPosition.RankIndex, blackChessPosition.FileIndex), null);
+            Assert.Equal(game.GameState.Board.GetChess(blackChessPosition), null);
 
-            Assert.Equal(game.GameState.Board.Get(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex).Player, PlayerType.Black);
+            Assert.Equal(game.GameState.Board.GetChess(whiteChessPosition).Player, PlayerType.Black);
 
-            Assert.Equal(game.GameState.Board.Get(whiteChessPosition.RankIndex, whiteChessPosition.FileIndex).Type, ChessType.Pawn);
+            Assert.Equal(game.GameState.Board.GetChess(whiteChessPosition).Type, ChessType.Pawn);
         }
     }
 }
