@@ -4,5 +4,7 @@ namespace chess_game
     {
         Chess Get(int rank, int file);
         void Set(int rank, int file, Chess chess);
+        Chess GetChess(Position position);
+        void SetChess(Position position, Chess chess);
     }
 }

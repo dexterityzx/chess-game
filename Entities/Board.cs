@@ -59,5 +59,31 @@ namespace chess_game
 
             return new Board(clonedBoard);
         }
+
+        public Chess GetChess(Position position)
+        {
+            var file = FileToBoardIndex(position.File);
+            var rank = RankToBoardIndex(position.Rank);
+
+            return Get(rank, file);
+        }
+
+        public void SetChess(Position position, Chess chess)
+        {
+            var file = FileToBoardIndex(position.File);
+            var rank = RankToBoardIndex(position.Rank);
+
+            Set(rank, file, chess);
+        }
+
+        private int FileToBoardIndex(char positionFile)
+        {
+            return char.ToUpper(positionFile) - 65;
+        }
+
+        private int RankToBoardIndex(int positionRank)
+        {
+            return positionRank - 1;
+        }
     }
 }
