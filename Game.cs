@@ -70,7 +70,7 @@ namespace chess_game
 
         private bool IsValidCommand(Command command, GameState currentState)
         {
-            var chess = currentState.Board.Get(command.From.RankIndex, command.From.FileIndex);
+            var chess = currentState.Board.GetChess(command.From);
             if (chess == null)
             {
                 throw new Exception("Invalid Command. From position has no chess.");
@@ -99,9 +99,10 @@ namespace chess_game
         }
         private Position GetChessPositionCapturedByInPassing(IBoard board, Position To, PlayerType playerType)
         {
-            var offset = playerType == PlayerType.White ? -1 : 1;
-            var chess = board.Get(To.RankIndex + offset, To.FileIndex);
-            return chess == null ? null : new Position(To.File, To.Rank + offset);
+            var positionToCapture = To.Clone();
+            positionToCapture.Rank += playerType == PlayerType.White ? -1 : 1;
+
+            return board.GetChess(positionToCapture) == null ? null : positionToCapture;
         }
         private bool IsValidPawnMove(Command command, GameState gameState)
         {
@@ -110,10 +111,9 @@ namespace chess_game
                 return false;
             }
 
-            var chess = gameState.Board.Get(command.From.RankIndex, command.From.FileIndex);
-            var rankMove = Math.Abs(command.To.RankIndex - command.From.RankIndex);
-            var fileMove = Math.Abs(command.To.FileIndex - command.From.FileIndex);
-
+            var chess = gameState.Board.GetChess(command.From);
+            var rankMove = Math.Abs(command.To.Rank - command.From.Rank);
+            var fileMove = Math.Abs((int)command.To.File - (int)command.From.File);
 
             if (fileMove == 0)
             {
@@ -122,7 +122,7 @@ namespace chess_game
                 var direction = command.Player == PlayerType.Black ? -1 : 1;
                 for (var move = 1; move <= rankMove; move++)
                 {
-                    var chessOntheWay = gameState.Board.Get(command.From.RankIndex + move * direction, command.From.FileIndex);
+                    var chessOntheWay = gameState.Board.GetChess(command.From.Offset(0, move * direction));
                     if (chessOntheWay != null)
                     {
                         return false;
@@ -133,7 +133,7 @@ namespace chess_game
             else
             {
                 //normal capture
-                var chessToCapture = gameState.Board.Get(command.To.RankIndex, command.To.FileIndex);
+                var chessToCapture = gameState.Board.GetChess(command.To);
                 if (chessToCapture != null)
                 {
                     return true;
@@ -142,7 +142,7 @@ namespace chess_game
                 {
                     //check in passing condition
                     var positionToCapture = GetChessPositionCapturedByInPassing(gameState.Board, command.To, command.Player);
-                    chessToCapture = gameState.Board.Get(positionToCapture.RankIndex, positionToCapture.FileIndex);
+                    chessToCapture = gameState.Board.GetChess(positionToCapture);
 
                     return positionToCapture != null
                         && IsInPassingCapturedAvailable(positionToCapture, gameState)
@@ -157,10 +157,10 @@ namespace chess_game
             var lastMovedToPosition = gameState.PlayerCommand.To;
             if (!lastMovedToPosition.Equals(PositionToCapture)) return false;
 
-            var lastMovedChess = gameState.Board.Get(lastMovedToPosition.RankIndex, lastMovedToPosition.FileIndex);
+            var lastMovedChess = gameState.Board.GetChess(lastMovedToPosition);
             if (lastMovedChess.Type != ChessType.Pawn) return false;
 
-            var lastMovedFileDistance = Math.Abs(gameState.PlayerCommand.To.RankIndex - gameState.PlayerCommand.From.RankIndex);
+            var lastMovedFileDistance = Math.Abs(gameState.PlayerCommand.To.Rank - gameState.PlayerCommand.From.Rank);
             if (lastMovedFileDistance == 1) return false;
 
             return true;
@@ -170,9 +170,9 @@ namespace chess_game
             var nextState = currentState.Clone();
             nextState.Player = command.Player;
 
-            var chess = nextState.Board.Get(command.From.RankIndex, command.From.FileIndex);
-            nextState.Board.Set(command.From.RankIndex, command.From.FileIndex, null);
-            nextState.Board.Set(command.To.RankIndex, command.To.FileIndex, chess);
+            var chess = nextState.Board.GetChess(command.From);
+            nextState.Board.SetChess(command.From, null);
+            nextState.Board.SetChess(command.To, chess);
 
             //check in passing
             if (chess.Type == ChessType.Pawn)
@@ -180,7 +180,7 @@ namespace chess_game
                 var capturedChessPosition = GetChessPositionCapturedByInPassing(currentState.Board, command.To, command.Player);
                 if (capturedChessPosition != null)
                 {
-                    nextState.Board.Set(capturedChessPosition.RankIndex, capturedChessPosition.FileIndex, null);
+                    nextState.Board.SetChess(capturedChessPosition, null);
                 }
             }
 

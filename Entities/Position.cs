@@ -40,20 +40,10 @@ namespace chess_game
                 }
             }
         }
-        public int FileIndex
-        {
-            get
-            {
-                return char.ToUpper(_file) - 65;
-            }
-        }
 
-        public int RankIndex
+        public Position Offset(int fileOffset, int rankOffset)
         {
-            get
-            {
-                return _rank - 1;
-            }
+            return new Position((char)((int)_file + fileOffset), _rank + rankOffset);
         }
 
         public Position(char file, int rank)
