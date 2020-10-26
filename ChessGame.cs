@@ -2,7 +2,7 @@
 
 namespace chess_game
 {
-    class Program
+    class ChessGame
     {
         static void Main(string[] args)
         {
@@ -32,7 +32,7 @@ namespace chess_game
 
         }
 
-        public static Game InitializeGame()
+        public static GameEngine InitializeGame()
         {
             var board = new Board();
             for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
@@ -49,7 +49,7 @@ namespace chess_game
             gameState.Board = board;
             gameState.Result = GameResult.None;
 
-            return new Game(gameState);
+            return new GameEngine(gameState);
         }
 
         public static Command GenerateCommand(string commandString, PlayerType player)

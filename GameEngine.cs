@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace chess_game
 {
-    public class Game
+    public class GameEngine
     {
         private Stack<GameState> _gameStates;
         public GameState GameState
@@ -23,12 +23,12 @@ namespace chess_game
             }
         }
 
-        public Game()
+        public GameEngine()
         {
             _gameStates = new Stack<GameState>();
         }
 
-        public Game(GameState gameState)
+        public GameEngine(GameState gameState)
         {
             _gameStates = new Stack<GameState>();
             _gameStates.Push(gameState);

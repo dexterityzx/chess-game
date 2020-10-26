@@ -29,7 +29,7 @@ namespace chess_game
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.White;
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var whiteEndChessPosition = new Position('a', 3);
             var blackEndChessPosition = new Position('a', 6);
@@ -65,7 +65,7 @@ namespace chess_game
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.White;
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var whiteEndChessPosition = new Position('a', 4);
             var blackEndChessPosition = new Position('a', 5);
@@ -101,7 +101,7 @@ namespace chess_game
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.White;
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var whiteEndChessPosition = new Position('a', 5);
             var blackEndChessPosition = new Position('a', 4);
@@ -130,7 +130,7 @@ namespace chess_game
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.White;
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var whiteEndChessPosition = new Position('a', 4);
             var blackEndChessPosition = new Position('a', 3);
@@ -159,7 +159,7 @@ namespace chess_game
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.White;
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var blackEndChessPosition = new Position('a', 5);
 
@@ -183,7 +183,7 @@ namespace chess_game
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.White;
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var whiteEndChessPosition = new Position('a', 4);
 
@@ -208,7 +208,7 @@ namespace chess_game
             gameState.Player = PlayerType.White;
             gameState.PlayerCommand = new Command(PlayerType.White, new Position('a', 4), new Position('a', 5), true);
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var command1 = new Command(PlayerType.Black, new Position('b', 7), new Position('b', 5), false);
             game.ExecuteCommand(command1);
@@ -237,7 +237,7 @@ namespace chess_game
             gameState.Player = PlayerType.White;
             gameState.PlayerCommand = new Command(PlayerType.Black, new Position('b', 6), new Position('b', 5), true);
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
 
             var command2 = new Command(PlayerType.White, new Position('a', 5), new Position('b', 6), false);
 
@@ -262,7 +262,7 @@ namespace chess_game
             gameState.Player = PlayerType.White;
             gameState.PlayerCommand = new Command(PlayerType.White, new Position('a', 4), new Position('a', 5), true);
 
-            var game = new Game(gameState);
+            var game = new GameEngine(gameState);
             var command1 = new Command(PlayerType.Black, new Position('b', 6), new Position('a', 5), false);
             game.ExecuteCommand(command1);
 
