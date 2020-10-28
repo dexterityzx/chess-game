@@ -98,8 +98,6 @@ namespace chess_game
             return nextState;
         }
 
-
-
         private GameResult ValidateGameResult(GameState state)
         {
             //checkmate
@@ -116,7 +114,7 @@ namespace chess_game
             var chess = currentState.Board.GetChess(command.From);
             if (chess == null)
             {
-                throw new Exception("Invalid Command. From position has no chess.");
+                return false;
             }
             // chess is not null
 
@@ -136,7 +134,7 @@ namespace chess_game
                     if (!isValid) return false;
                     break;
                 default:
-                    throw new Exception("Invalid ChessType");
+                    return false;
             }
             return true;
         }
