@@ -55,7 +55,7 @@ namespace chess_game
             {
                 return true;
             }
-
+            // check if any chess reach to the other end
             var rankToCheck = currentPlayer == PlayerType.Black ? Position.MIN_RANK : Position.MAX_RANK;
             var board = gameState.Board;
             for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
