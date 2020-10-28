@@ -2,8 +2,8 @@ namespace chess_game
 {
     public class Board : IBoard
     {
-        public const int MIN = 0;
-        public const int MAX = 7;
+        private const int MIN = 0;
+        private const int MAX = 7;
         private Chess[,] _board;
 
         public Board()

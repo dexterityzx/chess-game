@@ -43,7 +43,20 @@ namespace chess_game
 
         public Position Offset(int fileOffset, int rankOffset)
         {
-            return new Position((char)((int)_file + fileOffset), _rank + rankOffset);
+            var newFile = (char)((int)_file + fileOffset);
+            var newRank = _rank + rankOffset;
+
+            if ((MIN_FILE <= newFile && newFile <= MAX_FILE) &&
+                (MIN_RANK <= newRank && newRank <= MAX_RANK))
+            {
+                return new Position(newFile, newRank);
+            }
+            else
+            {
+                return null;
+            }
+
+
         }
 
         public Position(char file, int rank)
@@ -55,7 +68,7 @@ namespace chess_game
         public Position(string position)
         {
             File = position[0];
-            Rank = (int)position[1];
+            Rank = (int)(position[1] - '0');
         }
 
         public Position Clone()
@@ -67,6 +80,11 @@ namespace chess_game
         {
             return _file == position._file &&
                    _rank == position._rank;
+        }
+
+        public string ToHash()
+        {
+            return _file.ToString() + _rank.ToString();
         }
     }
 }

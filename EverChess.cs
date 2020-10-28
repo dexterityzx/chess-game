@@ -2,7 +2,7 @@
 
 namespace chess_game
 {
-    class ChessGame
+    class EverChess
     {
         static void Main(string[] args)
         {
@@ -28,8 +28,8 @@ namespace chess_game
 
             }
 
-            Console.WriteLine(player.ToString());
-
+            Console.WriteLine($"{gameEngine.GameState.Player.ToString()} Player Wins!");
+            Console.ReadLine();
         }
 
         public static GameEngine InitializeGameEngine()
@@ -49,6 +49,7 @@ namespace chess_game
             gameState.Board = board;
             gameState.Result = GameResult.None;
             gameState.Player = PlayerType.None;
+            gameState.HasAnotherRound = false;
 
             return new GameEngine(gameState);
         }

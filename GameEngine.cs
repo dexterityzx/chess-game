@@ -31,7 +31,7 @@ namespace chess_game
         public GameEngine(GameState gameState)
         {
             _gameStates = new Stack<GameState>();
-            _gameStates.Push(gameState);
+            _gameStates.Push(gameState.Clone());
 
             if (gameState.PlayerCommand != null && !gameState.PlayerCommand.HasBeenExecuted)
             {
@@ -45,107 +45,156 @@ namespace chess_game
             {
                 throw new Exception("Invalid Command.");
             }
-
-
             _gameStates.Push(NextState(command, GameState));
 
+        }
+
+        private bool HasPlayerWon(GameState gameState, PlayerType currentPlayer)
+        {
+            if (!HasPositionsToMove(gameState, GetOpponent(currentPlayer)))
+            {
+                return true;
+            }
+
+            var rankToCheck = currentPlayer == PlayerType.Black ? Position.MIN_RANK : Position.MAX_RANK;
+            var board = gameState.Board;
+            for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
+            {
+                var position = new Position(file, rankToCheck);
+                var chess = board.GetChess(new Position(file, rankToCheck));
+
+                if (chess != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool HasNextRound(out PlayerType nextPlayer)
         {
             var lastPlayer = _gameStates.Peek().Player;
+            var gameState = _gameStates.Peek();
 
-            switch (GameResult)
+            if (lastPlayer == PlayerType.None)
             {
-                case GameResult.Checkmate:
-                case GameResult.Stalemate:
-                    nextPlayer = PlayerType.None;
-                    return false;
-
-                case GameResult.None:
-                    nextPlayer = GetOpponent(lastPlayer);
-                    return true;
-
-                default:
-                    throw new ArgumentException("Invalid GameResult");
+                nextPlayer = PlayerType.White;
+                return true;
             }
-        }
 
+            if (HasPlayerWon(gameState, lastPlayer))
+            {
+                gameState.Result = GameResult.Checkmate;
+                nextPlayer = PlayerType.None;
+                return false;
+            }
+
+            nextPlayer = gameState.HasAnotherRound ? lastPlayer : GetOpponent(lastPlayer);
+            return true;
+        }
         private GameState NextState(Command command, GameState currentState)
         {
             var nextState = currentState.Clone();
             nextState.Player = command.Player;
 
-            var chess = nextState.Board.GetChess(command.From);
+            var chessToCapture = nextState.Board.GetChess(command.To);
+            nextState.HasAnotherRound = chessToCapture != null ? true : false;
+
+            var chessToMove = nextState.Board.GetChess(command.From);
             nextState.Board.SetChess(command.From, null);
-            nextState.Board.SetChess(command.To, chess);
-
-            //check in passing
-            if (chess.Type == ChessType.Pawn)
-            {
-                var capturedChessPosition = GetChessPositionCapturedByInPassing(currentState.Board, command.To, command.Player);
-                if (capturedChessPosition != null)
-                {
-                    nextState.Board.SetChess(capturedChessPosition, null);
-                }
-            }
-
-            nextState.Result = ValidateGameResult(nextState);
+            nextState.Board.SetChess(command.To, chessToMove);
 
             nextState.PlayerCommand = command;
             nextState.PlayerCommand.HasBeenExecuted = true;
 
             return nextState;
         }
-
-        private GameResult ValidateGameResult(GameState state)
+        private bool HasPositionsToMove(GameState gameState, PlayerType currentPlayer)
         {
-            //checkmate
-            //return GameResult.Checkmate;
-
-            //stalemate
-            //return GameResult.Stalemate;
-
-            return GameResult.None;
-        }
-
-        private bool IsValidCommand(Command command, GameState currentState)
-        {
-            var chess = currentState.Board.GetChess(command.From);
-            if (chess == null)
+            var positionsToCapture = FindPositionsToCapture(gameState, currentPlayer);
+            if (positionsToCapture.Count > 0)
             {
-                return false;
+                return true;
             }
-            // chess is not null
 
-            // from and to position are not out of boundary
-
-            // Game has no result yet
-
-            // should not move opponent's chess
-
-            // should not move the chess onto player's chess
-
-            // should move what a chess can move
-            switch (chess.Type)
+            var rankDirection = GetRankMoveDirection(currentPlayer);
+            var board = gameState.Board;
+            for (int rank = Position.MIN_RANK; rank <= Position.MAX_RANK; rank++)
             {
-                case ChessType.Pawn:
-                    var isValid = IsValidPawnMove(command, currentState);
-                    if (!isValid) return false;
-                    break;
-                default:
-                    return false;
-            }
-            return true;
-        }
-        private Position GetChessPositionCapturedByInPassing(IBoard board, Position To, PlayerType playerType)
-        {
-            var positionToCapture = To.Clone();
-            positionToCapture.Rank += playerType == PlayerType.White ? -1 : 1;
+                for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
+                {
+                    var position = new Position(file, rank);
+                    var chess = board.GetChess(new Position(file, rank));
 
-            return board.GetChess(positionToCapture) == null ? null : positionToCapture;
+                    if (chess == null)
+                    {
+                        continue;
+                    }
+
+                    if (chess.Player != currentPlayer)
+                    {
+                        continue;
+                    }
+
+                    var chessOntheWay = board.GetChess(position.Offset(0, 1 * rankDirection));
+                    if (chessOntheWay == null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
-        private bool IsValidPawnMove(Command command, GameState gameState)
+        private Dictionary<string, Position> FindPositionsToCapture(GameState gameState, PlayerType currentPlayer)
+        {
+            var positionsToCapture = new Dictionary<string, Position>();
+            var rankDirection = GetRankMoveDirection(currentPlayer);
+            var board = gameState.Board;
+
+            for (int rank = Position.MIN_RANK; rank <= Position.MAX_RANK; rank++)
+            {
+                for (char file = Position.MIN_FILE; file <= Position.MAX_FILE; file++)
+                {
+                    var position = new Position(file, rank);
+                    var chess = board.GetChess(new Position(file, rank));
+
+                    if (chess == null)
+                    {
+                        continue;
+                    }
+
+                    if (chess.Player != currentPlayer)
+                    {
+                        continue;
+                    }
+
+                    var positionToCapture = position.Offset(1, 1 * rankDirection);
+                    if (positionToCapture != null)
+                    {
+                        var chessToCapture = gameState.Board.GetChess(positionToCapture);
+                        if (chessToCapture != null && chessToCapture.Player == GetOpponent(currentPlayer))
+                        {
+                            positionsToCapture.Add(positionToCapture.ToHash(), positionToCapture);
+                        }
+                    }
+
+                    positionToCapture = position.Offset(-1, 1 * rankDirection);
+                    if (positionToCapture != null)
+                    {
+                        var chessToCapture = gameState.Board.GetChess(positionToCapture);
+                        if (chessToCapture != null && chessToCapture.Player == GetOpponent(currentPlayer))
+                        {
+                            positionsToCapture.Add(positionToCapture.ToHash(), positionToCapture);
+                        }
+                    }
+                }
+            }
+
+            return positionsToCapture;
+        }
+        private bool IsValidCommand(Command command, GameState gameState)
         {
             if (command.Player == PlayerType.None)
             {
@@ -153,60 +202,67 @@ namespace chess_game
             }
 
             var chess = gameState.Board.GetChess(command.From);
-            var rankMove = Math.Abs(command.To.Rank - command.From.Rank);
+            if (chess == null)
+            {
+                return false;
+            }
+
+            var rankMoveDirection = GetRankMoveDirection(command.Player);
+            var rankMove = command.To.Rank - command.From.Rank;
+
+            // we can only move in same direction
+            if ((rankMove * rankMoveDirection) < 0)
+            {
+                return false;
+            }
+
+            rankMove = Math.Abs(rankMove);
             var fileMove = Math.Abs((int)command.To.File - (int)command.From.File);
 
-            if (fileMove == 0)
+            var positionsToCapture = FindPositionsToCapture(gameState, command.Player);
+
+            //we can not move the same chess again
+            if (gameState.HasAnotherRound)
             {
-                //can not move straight if some other chess were on the way
-                //can move 2 steps from initial location
-                var direction = command.Player == PlayerType.Black ? -1 : 1;
-                for (var move = 1; move <= rankMove; move++)
+                if (command.From.Equals(gameState.PlayerCommand.To))
                 {
-                    var chessOntheWay = gameState.Board.GetChess(command.From.Offset(0, move * direction));
+                    return false;
+                }
+            }
+            //we have to capture something
+            if (positionsToCapture.Count > 0)
+            {
+                return positionsToCapture.ContainsKey(command.To.ToHash());
+            }
+            else
+            {
+                // we can not move diagonal if we were not capturing anything
+                if (fileMove != 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    var rankDirection = GetRankMoveDirection(command.Player);
+                    if (rankMove != 1)
+                    {
+                        return false;
+                    }
+
+                    var chessOntheWay = gameState.Board.GetChess(command.From.Offset(0, rankMove * rankDirection));
                     if (chessOntheWay != null)
                     {
                         return false;
                     }
-                }
-                return (command.From.Equals(chess.InitialPosition) && rankMove == 2) || (rankMove == 1);
-            }
-            else
-            {
-                //normal capture
-                var chessToCapture = gameState.Board.GetChess(command.To);
-                if (chessToCapture != null)
-                {
+
                     return true;
                 }
-                else
-                {
-                    //check in passing condition
-                    var positionToCapture = GetChessPositionCapturedByInPassing(gameState.Board, command.To, command.Player);
-                    chessToCapture = gameState.Board.GetChess(positionToCapture);
-
-                    return positionToCapture != null
-                        && IsInPassingCapturedAvailable(positionToCapture, gameState)
-                        && chessToCapture.Player == GetOpponent(command.Player)
-                        && fileMove == 1
-                        && rankMove == 1;
-                }
             }
         }
-        private bool IsInPassingCapturedAvailable(Position PositionToCapture, GameState gameState)
+        private int GetRankMoveDirection(PlayerType player)
         {
-            var lastMovedToPosition = gameState.PlayerCommand.To;
-            if (!lastMovedToPosition.Equals(PositionToCapture)) return false;
-
-            var lastMovedChess = gameState.Board.GetChess(lastMovedToPosition);
-            if (lastMovedChess.Type != ChessType.Pawn) return false;
-
-            var lastMovedFileDistance = Math.Abs(gameState.PlayerCommand.To.Rank - gameState.PlayerCommand.From.Rank);
-            if (lastMovedFileDistance == 1) return false;
-
-            return true;
+            return player == PlayerType.Black ? -1 : 1;
         }
-
         private PlayerType GetOpponent(PlayerType playerType)
         {
             switch (playerType)
