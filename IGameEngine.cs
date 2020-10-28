@@ -6,6 +6,6 @@ namespace chess_game
         GameResult GameResult { get; }
 
         void ExecuteCommand(Command command);
-        bool NextRound(out PlayerType nextPlayer);
+        bool HasNextRound(out PlayerType nextPlayer);
     }
 }

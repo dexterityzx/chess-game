@@ -10,7 +10,7 @@ namespace chess_game
 
             PlayerType player;
 
-            while (gameEngine.NextRound(out player))
+            while (gameEngine.HasNextRound(out player))
             {
                 try
                 {

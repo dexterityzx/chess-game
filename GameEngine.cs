@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace chess_game
 {
-    public class GameEngine
+    public class GameEngine : IGameEngine
     {
         private Stack<GameState> _gameStates;
         public GameState GameState
@@ -51,7 +51,7 @@ namespace chess_game
 
         }
 
-        public bool NextRound(out PlayerType nextPlayer)
+        public bool HasNextRound(out PlayerType nextPlayer)
         {
             var lastPlayer = _gameStates.Peek().Player;
 
@@ -69,6 +69,46 @@ namespace chess_game
                 default:
                     throw new ArgumentException("Invalid GameResult");
             }
+        }
+
+        private GameState NextState(Command command, GameState currentState)
+        {
+            var nextState = currentState.Clone();
+            nextState.Player = command.Player;
+
+            var chess = nextState.Board.GetChess(command.From);
+            nextState.Board.SetChess(command.From, null);
+            nextState.Board.SetChess(command.To, chess);
+
+            //check in passing
+            if (chess.Type == ChessType.Pawn)
+            {
+                var capturedChessPosition = GetChessPositionCapturedByInPassing(currentState.Board, command.To, command.Player);
+                if (capturedChessPosition != null)
+                {
+                    nextState.Board.SetChess(capturedChessPosition, null);
+                }
+            }
+
+            nextState.Result = ValidateGameResult(nextState);
+
+            nextState.PlayerCommand = command;
+            nextState.PlayerCommand.HasBeenExecuted = true;
+
+            return nextState;
+        }
+
+
+
+        private GameResult ValidateGameResult(GameState state)
+        {
+            //checkmate
+            //return GameResult.Checkmate;
+
+            //stalemate
+            //return GameResult.Stalemate;
+
+            return GameResult.None;
         }
 
         private bool IsValidCommand(Command command, GameState currentState)
@@ -168,32 +208,7 @@ namespace chess_game
 
             return true;
         }
-        private GameState NextState(Command command, GameState currentState)
-        {
-            var nextState = currentState.Clone();
-            nextState.Player = command.Player;
 
-            var chess = nextState.Board.GetChess(command.From);
-            nextState.Board.SetChess(command.From, null);
-            nextState.Board.SetChess(command.To, chess);
-
-            //check in passing
-            if (chess.Type == ChessType.Pawn)
-            {
-                var capturedChessPosition = GetChessPositionCapturedByInPassing(currentState.Board, command.To, command.Player);
-                if (capturedChessPosition != null)
-                {
-                    nextState.Board.SetChess(capturedChessPosition, null);
-                }
-            }
-
-            nextState.Result = ValidateGameResult(nextState);
-
-            nextState.PlayerCommand = command;
-            nextState.PlayerCommand.HasBeenExecuted = true;
-
-            return nextState;
-        }
         private PlayerType GetOpponent(PlayerType playerType)
         {
             switch (playerType)
@@ -207,16 +222,5 @@ namespace chess_game
                     throw new System.Exception("Invlaid PlayerTypes");
             }
         }
-        private GameResult ValidateGameResult(GameState state)
-        {
-            //checkmate
-            //return GameResult.Checkmate;
-
-            //stalemate
-            //return GameResult.Stalemate;
-
-            return GameResult.None;
-        }
-
     }
 }
